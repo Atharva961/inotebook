@@ -2,84 +2,104 @@ import { useState } from "react";
 import NoteContext from "./noteContext";
 
 const NoteState = (props) => {
-    const notesInitial = [
-        {
-            "_id": "63b30d91742db49fc3d4d467",
+    const notesInitial = [];
+
+    const host = "http://localhost:5000";
+    
+
+    const getNotes = async () => {
+        const response = await fetch(`${host}/api/notes/fetchallnotes`, {
+            method: "GET",
+            headers: {
+                "Content-type": "applications/json",
+                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhYWI3NTA5MDdkYzllYTZhYzI0YmMyIn0sImlhdCI6MTY3MzE4NjU5MX0.Y61OXpQbLabdzbcxSfrv12_fIe81WJVgWxtz-TPQD9k"
+            }
+        });
+        const json = await response.json();
+        console.log(json);
+        setNotes(json);
+    }
+
+    //Add a note
+    const addNote = async (title, description, tag) => {
+        //API call
+        const response = await fetch(`${host}/api/notes/addnote`, {
+            method: "POST",
+            headers: {
+                "Accept": "*/*",
+                "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+                "Content-Type": "application/json",
+                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhYWI3NTA5MDdkYzllYTZhYzI0YmMyIn0sImlhdCI6MTY3MjY3ODc0N30.4LChlBfcR2Po_eL2e1Ehq7dk_9I42yFb0XvGPACsSHE"
+            },
+            body: JSON.stringify({ title, description, tag })
+        });
+
+        const json = response.json();
+
+        console.log("Adding a new note");
+        const note = {
+            "_id": "63b30d9",
             "user": "63aab750907dc9ea6ac24bc2",
-            "title": "Silicon Valley",
-            "description": "Richard, Jared, Dinesh, Gilfoyle, Erlich",
-            "tag": "TV Show",
+            "title": title,
+            "description": description,
+            "tag": tag,
             "date": "2023-01-02T17:00:01.945Z",
             "__v": 0
-        },
-        {
-            "_id": "63b30d92742db49fc3d4d469",
-            "user": "63aab750907dc9ea6ac24bc2",
-            "title": "Silicon Valley",
-            "description": "Richard, Jared, Dinesh, Gilfoyle, Erlich",
-            "tag": "TV Show",
-            "date": "2023-01-02T17:00:02.597Z",
-            "__v": 0
-        },
-        {
-            "_id": "63b30d91742db49fc3d4d467",
-            "user": "63aab750907dc9ea6ac24bc2",
-            "title": "Silicon Valley",
-            "description": "Richard, Jared, Dinesh, Gilfoyle, Erlich",
-            "tag": "TV Show",
-            "date": "2023-01-02T17:00:01.945Z",
-            "__v": 0
-        },
-        {
-            "_id": "63b30d92742db49fc3d4d469",
-            "user": "63aab750907dc9ea6ac24bc2",
-            "title": "Silicon Valley",
-            "description": "Richard, Jared, Dinesh, Gilfoyle, Erlich",
-            "tag": "TV Show",
-            "date": "2023-01-02T17:00:02.597Z",
-            "__v": 0
-        },
-        {
-            "_id": "63b30d91742db49fc3d4d467",
-            "user": "63aab750907dc9ea6ac24bc2",
-            "title": "Silicon Valley",
-            "description": "Richard, Jared, Dinesh, Gilfoyle, Erlich",
-            "tag": "TV Show",
-            "date": "2023-01-02T17:00:01.945Z",
-            "__v": 0
-        },
-        {
-            "_id": "63b30d92742db49fc3d4d469",
-            "user": "63aab750907dc9ea6ac24bc2",
-            "title": "Silicon Valley",
-            "description": "Richard, Jared, Dinesh, Gilfoyle, Erlich",
-            "tag": "TV Show",
-            "date": "2023-01-02T17:00:02.597Z",
-            "__v": 0
-        },
-        {
-            "_id": "63b30d91742db49fc3d4d467",
-            "user": "63aab750907dc9ea6ac24bc2",
-            "title": "Silicon Valley",
-            "description": "Richard, Jared, Dinesh, Gilfoyle, Erlich",
-            "tag": "TV Show",
-            "date": "2023-01-02T17:00:01.945Z",
-            "__v": 0
-        },
-        {
-            "_id": "63b30d92742db49fc3d4d469",
-            "user": "63aab750907dc9ea6ac24bc2",
-            "title": "Silicon Valley",
-            "description": "Richard, Jared, Dinesh, Gilfoyle, Erlich",
-            "tag": "TV Show",
-            "date": "2023-01-02T17:00:02.597Z",
-            "__v": 0
+        };
+        setNotes(notes.concat(note));
+    }
+
+    //Delete a note
+    const deleteNote = async (id) => {
+        //API call
+        const response = await fetch(`${host}/api/notes/deletenote/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-type": "applications/json",
+                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhYWI3NTA5MDdkYzllYTZhYzI0YmMyIn0sImlhdCI6MTY3MzE4NjU5MX0.Y61OXpQbLabdzbcxSfrv12_fIe81WJVgWxtz-TPQD9k"
+            }
+
+        });
+
+        const json = await response.json();
+        console.log("Deleting the note with id: " + id);
+        const newNotes = notes.filter((note) => { return note._id !== id });
+        setNotes(newNotes);
+    }
+
+    //Edit a note
+    const editNote = async (id, title, description, tag) => {
+        //API call
+        const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
+            method: "PUT",
+            headers: {
+                "Accept": "*/*",
+                "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+                "Content-Type": "application/json",
+                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhYWI3NTA5MDdkYzllYTZhYzI0YmMyIn0sImlhdCI6MTY3MjY3ODc0N30.4LChlBfcR2Po_eL2e1Ehq7dk_9I42yFb0XvGPACsSHE"
+            },
+            body: JSON.stringify({ title, description, tag }) 
+        });
+
+        const json = await response.json();
+
+        //Logic to edit in client
+        let newNotes = JSON.parse(JSON.stringify(notes));
+        for (let index = 0; index < newNotes.length; index++) {
+            const element = newNotes[index];
+            if (element._id === id) {
+                newNotes[index].title = title;
+                newNotes[index].description = description;
+                newNotes[index].tag = tag;
+                break;
+            }
         }
-    ];
+        setNotes(newNotes);
+    }
 
     const [notes, setNotes] = useState(notesInitial);
     return (
-        <NoteContext.Provider value={{notes, setNotes}}>
+        <NoteContext.Provider value={{ notes, addNote, deleteNote, editNote, getNotes }}>
             {props.children}
         </NoteContext.Provider>
     )
