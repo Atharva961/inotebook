@@ -12,11 +12,11 @@ const NoteState = (props) => {
             method: "GET",
             headers: {
                 "Content-type": "applications/json",
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhYWI3NTA5MDdkYzllYTZhYzI0YmMyIn0sImlhdCI6MTY3MzE4NjU5MX0.Y61OXpQbLabdzbcxSfrv12_fIe81WJVgWxtz-TPQD9k"
+                "auth-token": localStorage.getItem('token')
             }
         });
         const json = await response.json();
-        console.log(json);
+        // console.log(json);
         setNotes(json);
     }
 
@@ -29,23 +29,15 @@ const NoteState = (props) => {
                 "Accept": "*/*",
                 "User-Agent": "Thunder Client (https://www.thunderclient.com)",
                 "Content-Type": "application/json",
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhYWI3NTA5MDdkYzllYTZhYzI0YmMyIn0sImlhdCI6MTY3MjY3ODc0N30.4LChlBfcR2Po_eL2e1Ehq7dk_9I42yFb0XvGPACsSHE"
+                "auth-token": localStorage.getItem('token')
             },
             body: JSON.stringify({ title, description, tag })
         });
 
-        const json = response.json();
+        const json = await response.json();
 
         console.log("Adding a new note");
-        const note = {
-            "_id": "63b30d9",
-            "user": "63aab750907dc9ea6ac24bc2",
-            "title": title,
-            "description": description,
-            "tag": tag,
-            "date": "2023-01-02T17:00:01.945Z",
-            "__v": 0
-        };
+        const note = json;
         setNotes(notes.concat(note));
     }
 
@@ -56,12 +48,13 @@ const NoteState = (props) => {
             method: "DELETE",
             headers: {
                 "Content-type": "applications/json",
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhYWI3NTA5MDdkYzllYTZhYzI0YmMyIn0sImlhdCI6MTY3MzE4NjU5MX0.Y61OXpQbLabdzbcxSfrv12_fIe81WJVgWxtz-TPQD9k"
+                "auth-token": localStorage.getItem('token')
             }
 
         });
 
         const json = await response.json();
+        console.log(json);
         console.log("Deleting the note with id: " + id);
         const newNotes = notes.filter((note) => { return note._id !== id });
         setNotes(newNotes);
@@ -76,12 +69,13 @@ const NoteState = (props) => {
                 "Accept": "*/*",
                 "User-Agent": "Thunder Client (https://www.thunderclient.com)",
                 "Content-Type": "application/json",
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjNhYWI3NTA5MDdkYzllYTZhYzI0YmMyIn0sImlhdCI6MTY3MjY3ODc0N30.4LChlBfcR2Po_eL2e1Ehq7dk_9I42yFb0XvGPACsSHE"
+                "auth-token": localStorage.getItem('token')
             },
             body: JSON.stringify({ title, description, tag }) 
         });
 
         const json = await response.json();
+        console.log(json);
 
         //Logic to edit in client
         let newNotes = JSON.parse(JSON.stringify(notes));
